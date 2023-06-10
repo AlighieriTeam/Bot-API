@@ -18,6 +18,14 @@ def register_events(socketio):
     def game_start(data):
         print(data)
 
+    @socketio.on("bot_ask")
+    def bot_ask(data):
+        print(data)
+        import random
+        act = random.randint(0, len(data) - 1)
+        print(f"Chosen {data[act]}, {len(data)}")
+        return act
+
     @socketio.on("game_update")
     def get_update(data):
         print(data)
