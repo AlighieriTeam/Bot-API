@@ -1,15 +1,15 @@
 from flask import Flask, request, jsonify
 import socketio as sio
 
-from API.Client.event_handlers import register_events
+from API.User.event_handlers import register_events
 
 app = Flask(__name__)
 sio_client = sio.Client()
 
 register_events(sio_client)
 
-ROOM = "3385"
-TOKEN = "PTJKCZXYGH"
+ROOM = "3658"
+TOKEN = "LBELEVRLZI"
 user_json = None
 from_website_json = None
 

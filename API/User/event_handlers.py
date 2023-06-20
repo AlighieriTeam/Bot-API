@@ -32,12 +32,4 @@ def register_events(socketio):
         print(f"Chosen {data[act]}, {len(data)}")
         return act
 
-    @socketio.on("game_update")
-    def get_update(data):
-        print(data)
-
-    @socketio.on("update_game_status")
-    def update_game_status(data):
-        # update game, get bot's response, send response
-        pass
 

@@ -10,6 +10,7 @@
 │   │   ├── app.py
 │   │   └── requirements.txt
 │   └── User
+│       └── event_handlers.py 
 └── README.md
 ```
 
@@ -19,6 +20,26 @@ Repozytorium składa się z folderu pod nazwą API oraz podfolderów Client i Us
     * **requirements.txt** zawieraja informacje o wszystkich importach potrzebnych do uruchomienia plików w programie klienta.
 > Nie należy zmieniać plików w folderze **Client**.
 * **User** jest przestrzenią gdzie użytkownik powinien umieścić swojego bota.
+* `event_handlers.py` zawiera handler'y do event'ów ze strony serwera
+
+Istotne są z tego metody:
+* game_start, która przyjmuje dane startowe
+* bot_ask, która otrzymuje aktualizacje względem ostatniej tury i listę dostępnych akcji
+
+## Dane startowe
+jest to json z polami:
+- `board` - będąca mapą 2D w postaci listy list
+- `player_positions` - lista pozycji graczy
+- `player_index` - Twój indeks z pozycji graczy
+- `ghosts` - pozycje duchów (pac-man)
+- `cookies` - pozycje punktów do zdobycia przez gracza
+
+## Dane aktualizujące
+jest to json z polami
+- `player_update` - lista pozycji graczy:
+  - `{index: [x, y]}`
+- `eaten_cookies` - zjedzone punkty
+- `ghost_update` - obecne pozycje duchów (pacman)
 
 ## Schemat użytkowania
 Przed uruchomieniem programu:
@@ -28,9 +49,9 @@ Przed uruchomieniem programu:
 > pip install -r requirements.txt
 ```
 
-2. Aby program działał poprawnie trzeba podać token udostępniony użytkownikowi ze strony pokoju i wpisać go w odpowiednie miejsce.
-
-> miejsce
+2. Aby program działał poprawnie trzeba podać token udostępniony użytkownikowi ze strony pokoju i wpisać go w odpowiednie miejsce. w app.py:
+> ROOM = "1234" \
+> TOKEN = "ABCDEFGHIJ"
 
 3. Po wpisaniu tych komend powinien zostać uruchomiony poprawnie client i połączenie zostać nawiązane.
 
@@ -38,38 +59,19 @@ Przed uruchomieniem programu:
 > python app.py
 ```
 
-4. Następnie użytkownik powinien uruchomić swój program napisany w dowolnym języku umieszczony w folderze user.
+## Ustawienie własnego bota
+Użytkownik powinien zaktualizować funkcje `game_start` i `bot_ask`,
+aby jego bot, mógł przyjmować dane i podejmować decyzje
+
+`bot_ask` powinien zawsze zwracać indeks wybranej akcji
 
 ## Opis działania relacji pomiędzy programem użytkownika a clientem
-Program użytkownika powinien wysyłać na wskazany adres ip jsona odpowiedniego dla danej gry zawierającego następny ruch bota. 
-Client następnie przesyła jsona na stronę i czeka na kolejnego. 
-W tym samym czasie udostępnia lokalizację pod którą znajduje się json z danymi ze strony dotyczącymi aktualnego stanu rozgrywki.
-
-### Pliki JSON
-
-#### Stan gry udostępniany użytkownikowi 
-```json
-{
-  "is_game_active": bool, 
-  "game_state": [
-    "map": [
-      [],
-      [],
-      ...,
-      []
-    ],
-    "avail_actions": [] // for pacman: [up, down, left, right], for pong: [left, right]
-  ]
-}
-```
-
-#### Kolejny ruch botawysyłany przez użytkownika:
-```json
-{
-  "is_game_active": bool,
-  "move": str // for pacman: [up, down, left, right], for pong: [left, right], one of this ofc
-}
-```
+Program po połączeniu z serwerem, reaguje na zdarzenia wysyłane przez serwer.
+Dodatkowo są eventy:
+- `bot_connected` - serwer zatwierdza, że bot jest połączony
+- `bot_confirm` - serwer pyta, czy bot jest nadal połączony z serwerem, **nie należy modyfikować**
+- `bot_error` - serwer odrzuca podłączenie bot'a, 
+  w data jest string z powodem odrzucenia
 
 ---
 # Alighieri Bot API
